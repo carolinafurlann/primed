@@ -1783,25 +1783,32 @@ var _msReg={
 };
 _msReg['Full Body']={f:_msReg.Chest.f+_msReg.Core.f+_msReg.Quadriceps.f+_msReg.Shoulders.f, b:_msReg.Back.b+_msReg.Glutes.b+_msReg.Hamstrings.b};
 function _msKey(m){ return _msReg[m]?m:(m==='Quads'?'Quadriceps':m==='Abs'?'Core':null); }
+/* typical synergists shown dimmed as "secondary" */
+var _msSec={Chest:['Triceps','Shoulders'],Back:['Biceps'],Shoulders:['Triceps'],Quadriceps:['Glutes'],Hamstrings:['Glutes'],Glutes:['Hamstrings'],Biceps:['Forearms']};
+function _msSecKeys(muscle){ return (_msSec[muscle]||[]).filter(function(s){return _msReg[s];}); }
 function muscleFigure(muscle){
   var lt=S.theme==='light', mb=lt?'#cdd5c2':'#3b4630', ml=lt?'#aeb89e':'#2a3422', r=_msReg[muscle]||{};
+  var secs=_msSecKeys(muscle);
+  function secHl(view){ return secs.map(function(s){ return (_msReg[s]&&_msReg[s][view])||''; }).join(''); }
   var fDef='<g fill="none" stroke="'+ml+'" stroke-width="1.4" stroke-linecap="round"><path d="M100 70 Q86 84 80 104"/><path d="M100 70 Q114 84 120 104"/><path d="M100 78 L100 150"/><path d="M85 128 H115"/><path d="M86 144 H114"/><path d="M87 160 H113"/></g>';
   var bDef='<g fill="none" stroke="'+ml+'" stroke-width="1.4" stroke-linecap="round"><path d="M100 78 L100 190"/><path d="M84 108 Q93 130 100 142"/><path d="M116 108 Q107 130 100 142"/></g>';
-  function v(def,hlp,lbl){ return '<svg viewBox="0 0 200 418" width="118">'+_msBody(mb)+'<g fill="var(--acc)">'+(hlp||'')+'</g>'+def+'<text x="100" y="415" text-anchor="middle" fill="var(--mut)" font-size="13" font-family="sans-serif">'+lbl+'</text></svg>'; }
-  return '<div style="display:flex;justify-content:center;gap:10px">'+v(fDef,r.f,'Front')+v(bDef,r.b,'Back')+'</div>';
+  function v(def,hlp,sec,lbl){ return '<svg viewBox="0 0 200 418" width="118">'+_msBody(mb)+'<g fill="var(--acc)" opacity="0.4">'+(sec||'')+'</g><g fill="var(--acc)">'+(hlp||'')+'</g>'+def+'<text x="100" y="415" text-anchor="middle" fill="var(--mut)" font-size="13" font-family="sans-serif">'+lbl+'</text></svg>'; }
+  return '<div style="display:flex;justify-content:center;gap:10px">'+v(fDef,r.f,secHl('f'),'Front')+v(bDef,r.b,secHl('b'),'Back')+'</div>';
 }
 function muscleMapCard(def){
   var key=_msKey(def.muscle); if(!key)return '';
+  var secs=_msSecKeys(key);
+  var legend='<span style="margin:0 9px"><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--acc);margin-right:6px;vertical-align:middle"></span>'+esc(def.muscle)+'</span>';
+  if(secs.length)legend+='<span style="margin:0 9px"><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--acc);opacity:.4;margin-right:6px;vertical-align:middle"></span>'+secs.join(', ')+'</span>';
   return '<div class="sec">Muscles worked</div><div class="card">'+muscleFigure(key)+
-    '<div style="text-align:center;margin-top:6px;font-size:12px;color:var(--mut)"><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--acc);margin-right:6px;vertical-align:middle"></span>'+esc(def.muscle)+'</div></div>';
+    '<div style="text-align:center;margin-top:6px;font-size:12px;color:var(--mut)">'+legend+'</div></div>';
 }
-function demoLink(def){ var q=encodeURIComponent(def.name+' how to'); return '<a class="btn soft" style="display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 14px;text-decoration:none;color:var(--text)" href="https://www.youtube.com/results?search_query='+q+'" target="_blank" rel="noopener">'+icon('play')+'Watch a demo</a>'; }
 function exDetailBody(id){
   var def=exDef(id);
   var sessions=[]; // {date, sets}
   S.workouts.forEach(function(w){ w.exercises.forEach(function(e){ if(e.exId===id)sessions.push({date:w.start,sets:e.sets}); }); });
   var b=bestsBefore(id,null);
-  var h=muscleMapCard(def)+demoLink(def);
+  var h=muscleMapCard(def);
   /* chart */
   if(sessions.length){
     var last=sessions.slice(-12);
