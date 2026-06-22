@@ -2462,20 +2462,20 @@ function setDataTab(){
   h+='</div>';
   h+='<div class="sec">Wearables</div><div class="card" style="padding:4px 16px">';
   if(!S._uid){
-    h+='<div class="frow"><div class="grow"><span class="fl">Connect a wearable</span><div class="sub" style="margin:2px 0 0;font-weight:400">Sign in to sync sleep &amp; recovery automatically</div></div><button class="btn small ghost ctl" onclick="goCreateAccount()">Sign in</button></div>';
+    h+='<div class="frow"><div class="grow"><span class="fl">Connect a tracker</span><div class="sub" style="margin:2px 0 0;font-weight:400">Sign in to sync sleep &amp; recovery automatically</div></div><button class="btn small ghost ctl" onclick="goCreateAccount()">Sign in</button></div>';
   } else if(S.wearable){
     h+='<div class="frow"><div class="grow"><span class="fl">'+esc(wearableLabel(S.wearable))+' connected</span><div class="sub" style="margin:2px 0 0;font-weight:400">Sleep, HRV &amp; resting HR feed your readiness</div></div><button class="btn small ghost ctl" onclick="syncWearable(false)">Sync now</button></div>';
     h+='<div class="frow"><span class="fl" style="color:var(--red)">Disconnect</span><button class="btn small ghost ctl" style="color:var(--red)" onclick="wearableDisconnect()">Disconnect</button></div>';
   } else {
     if(NATIVE.ios){
-      h+='<div class="frow"><div class="grow"><span class="fl">Apple Health</span><div class="sub" style="margin:2px 0 0;font-weight:400">Sleep, HRV &amp; resting heart rate — straight from your iPhone</div></div><button class="btn small ghost ctl" onclick="wearableConnect(\'apple\')">Connect</button></div>';
+      h+='<div class="frow"><div class="grow"><span class="fl">Apple Health</span><div class="sub" style="margin:2px 0 0;font-weight:400">Syncs sleep, HRV &amp; resting HR — from Apple Watch, Oura, Whoop, Garmin &amp; more</div></div><button class="btn small ghost ctl" onclick="wearableConnect(\'apple\')">Connect</button></div>';
     } else {
-      h+='<div class="frow"><div class="grow"><span class="fl" style="color:var(--mut)">Apple Health</span><div class="sub" style="margin:2px 0 0;font-weight:400">Needs the iOS app — not available on web</div></div><span class="sub" style="margin:0">Soon</span></div>';
+      h+='<div class="frow"><div class="grow"><span class="fl" style="color:var(--mut)">Apple Health</span><div class="sub" style="margin:2px 0 0;font-weight:400">In the iOS app — reads your recovery from Apple Watch, Oura, Whoop, Garmin &amp; more</div></div><span class="sub" style="margin:0">Soon</span></div>';
     }
     h+='<div class="frow"><div class="grow"><span class="fl">Try it — demo</span><div class="sub" style="margin:2px 0 0;font-weight:400">Sample data, see readiness auto-fill</div></div><button class="btn small ghost ctl" onclick="wearableConnect(\'demo\')">Connect demo</button></div>';
-    h+='<div class="frow"><div class="grow"><span class="fl" style="color:var(--mut)">Oura Ring</span><div class="sub" style="margin:2px 0 0;font-weight:400">Sleep, HRV &amp; resting HR — returns with the cloud sync upgrade</div></div><span class="sub" style="margin:0">Soon</span></div>';
   }
   h+='</div>';
+  if(!S.wearable)h+='<div class="sub" style="margin:8px 8px 0;line-height:1.6">One hub, every tracker — Primed reads from Apple Health, so whatever writes there (Apple Watch, Oura, Whoop, Garmin&hellip;) flows straight into your readiness. No separate logins.</div>';
   h+='<div class="sec">Backup</div><div class="card" style="padding:4px 16px">';
   h+='<div class="frow"><span class="fl">Export backup</span><button class="btn small ghost ctl" onclick="exportData()">Download</button></div>';
   h+='<div class="frow"><span class="fl">Import backup</span><button class="btn small ghost ctl" onclick="document.getElementById(\'imp-file\').click()">Choose file</button></div>';
@@ -2822,9 +2822,11 @@ function buildStarterRoutines(goal,level,days){
 function renderOnboard(){ $('#screen').innerHTML=onboardHtml(); $('#screen').scrollTop=0; }
 function obNext(){ _ob.step++; renderOnboard(); }
 function obBack(){ if(_ob.step>0){_ob.step--; renderOnboard();} }
-function obPick(field,val){ _ob[field]=val; if(_ob.step<3){ _ob.step++; renderOnboard(); } else obFinish(); }
+function obPick(field,val){ _ob[field]=val; if(_ob.step<4){ _ob.step++; renderOnboard(); } else obFinish(); }
 function obSkip(){ S.onboarded=true; S._dirty=true; save(); tab='home'; render(); }
 function obLogin(){ if(SB)SB.auth.signOut(); S.signedIn=false; S._uid=null; S._dirty=false; authMode='in'; save(); render(); }
+function obConnectHealth(){ obFinish(); wearableConnect('apple'); }
+function obDemoFinish(){ obFinish(); wearableConnect('demo'); }
 function obFinish(){
   if(_ob.goal)S.goal=_ob.goal; if(_ob.level)S.level=_ob.level; if(_ob.days)S.weekGoal=_ob.days;
   var rs=buildStarterRoutines(_ob.goal||'Build muscle',_ob.level||'Beginner',_ob.days||3);
@@ -2854,6 +2856,20 @@ function onboardHtml(){
     h+=obStep('How experienced are you?','level',[['Beginner','',"New to lifting or back after a long break"],['Intermediate','',"Training consistently for 6+ months"],['Advanced','',"Years of structured training"]]);
   } else if(s===3){
     h+=obStep('How many days a week can you train?','days',[[3,''],[4,''],[5,'']]);
+  } else if(s===4){
+    h+='<div style="text-align:center;margin-top:7vh">'+
+      '<div class="qi" style="width:64px;height:64px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;border-radius:18px;background:var(--accSoft);color:var(--acc)">'+icon('pulse')+'</div>'+
+      '<div class="h1" style="margin:0">Sync your recovery</div>';
+    if(NATIVE.ios){
+      h+='<div class="authtag" style="margin-top:10px">Connect Apple Health and Primed reads your sleep, HRV &amp; resting heart rate automatically — from Apple Watch, Oura, Whoop, Garmin and more — to set your training target each morning.</div>'+
+        '<button class="btn" style="margin-top:26px" onclick="obConnectHealth()">Connect Apple Health</button>'+
+        '<div class="authnote"><u style="cursor:pointer" onclick="obFinish()">I\'ll do this later</u></div>';
+    } else {
+      h+='<div class="authtag" style="margin-top:10px">In the iOS app, Primed reads your sleep &amp; recovery from Apple Health — which pulls from Apple Watch, Oura, Whoop, Garmin and more. For now, log a quick check-in each morning or try it with sample data.</div>'+
+        '<button class="btn" style="margin-top:26px" onclick="obFinish()">Got it</button>'+
+        '<div class="authnote"><u style="cursor:pointer;color:var(--acc)" onclick="obDemoFinish()">Try it with sample data</u></div>';
+    }
+    h+='<div class="authnote" style="cursor:pointer" onclick="obBack()">‹ Back</div></div>';
   }
   return h+'</div>';
 }
