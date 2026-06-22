@@ -1955,8 +1955,8 @@ function finishWorkout(){
   },'Finish');
 }
 /* ============ premium features (Pro) ============ */
-function isPremium(){ return true; }   /* Pro tier retired — every feature is included in the trial and the lifetime unlock */
-/* ---- access model: 14-day trial (+14 for feedback) → read-only → £10 lifetime unlock ---- */
+function isPremium(){ return true; }   /* Pro tier retired — every feature is included in the trial and the subscription */
+/* ---- access model: 14-day trial (+14 for feedback) → read-only → £15/year subscription ---- */
 function trialLimitDays(){ return 14 + (S._bonusDays||0); }   /* bonus days are granted server-side after you approve the feedback */
 function trialDaysLeft(){ if(!S.trialStart)return trialLimitDays(); var used=(Date.now()-new Date(S.trialStart).getTime())/864e5; return Math.max(0,Math.ceil(trialLimitDays()-used)); }
 function accessState(){ if(S.purchased)return 'full'; if(!S.signedIn)return 'full'; return trialDaysLeft()>0?'trial':'readonly'; }
@@ -1967,10 +1967,10 @@ function trialCard(){
   var st=accessState();
   if(st==='trial'){
     var d=trialDaysLeft();
-    return '<div class="card tap" onclick="trialEndedSheet()"><div class="row"><span class="qi">'+icon('sparkles')+'</span><div class="grow"><b>Free trial · '+d+' day'+(d!==1?'s':'')+' left</b><div class="sub" style="margin:2px 0 0">Unlock Primed for life — £10 once, no subscription.</div></div><span style="color:var(--mut)">›</span></div></div>';
+    return '<div class="card tap" onclick="trialEndedSheet()"><div class="row"><span class="qi">'+icon('sparkles')+'</span><div class="grow"><b>Free trial · '+d+' day'+(d!==1?'s':'')+' left</b><div class="sub" style="margin:2px 0 0">Keep Primed after your trial — £15/year, cancel anytime.</div></div><span style="color:var(--mut)">›</span></div></div>';
   }
   if(st==='readonly'){
-    return '<div class="card tap" onclick="trialEndedSheet()" style="border-color:var(--acc)"><div class="row"><span class="qi" style="background:var(--accSoft);color:var(--acc)">'+icon('sparkles')+'</span><div class="grow"><b>Trial ended — read-only</b><div class="sub" style="margin:2px 0 0">Unlock for life (£10) to log workouts again.</div></div><span style="color:var(--acc)">›</span></div></div>';
+    return '<div class="card tap" onclick="trialEndedSheet()" style="border-color:var(--acc)"><div class="row"><span class="qi" style="background:var(--accSoft);color:var(--acc)">'+icon('sparkles')+'</span><div class="grow"><b>Trial ended — read-only</b><div class="sub" style="margin:2px 0 0">Subscribe (£15/year) to log workouts again.</div></div><span style="color:var(--acc)">›</span></div></div>';
   }
   return '';
 }
@@ -1994,7 +1994,7 @@ function dismissRecap(){ S.lastRecapWeek=monday(new Date()).toISOString(); save(
 function premiumTeaser(title,desc){
   return '<div class="card tap" onclick="upgradeSheet()" style="border-style:dashed"><div class="row"><span class="qi" style="background:rgba(245,192,68,.14);color:var(--gold)">'+icon('trophy')+'</span><div class="grow"><b>'+esc(title)+' <span class="pill-pro">PRO</span></b><div class="sub" style="margin:3px 0 0">'+esc(desc)+'</div></div><span style="color:var(--mut)">›</span></div></div>';
 }
-function upgradeSheet(){ trialEndedSheet(); }   /* legacy entry point → the lifetime unlock paywall */
+function upgradeSheet(){ trialEndedSheet(); }   /* legacy entry point → the subscription paywall */
 /* --- autoregulation --- */
 function autoregBand(score){
   if(score>=85)return {key:'push',color:'var(--green)',ic:'up',title:'Push day',msg:'You\'re recovered — chase it. Add a set or load to your top sets.'};
@@ -2439,12 +2439,12 @@ function setPrefsTab(){
   h+='<div class="frow"><div class="grow"><span class="fl">Notifications</span><div class="sub" style="margin:2px 0 0;font-weight:400">Forgotten-workout reminder &amp; rest-timer alerts</div></div><select class="ctl" onchange="toggleNotify(this.value===\'on\')"><option value="off"'+(!S.notifications?' selected':'')+'>Off</option><option value="on"'+(S.notifications?' selected':'')+'>On</option></select></div>';
   h+='</div><div class="sec">Membership</div><div class="card" style="padding:4px 16px">';
   if(S.purchased){
-    h+='<div class="frow"><div class="grow"><span class="fl">Lifetime <span class="pill-pro">UNLOCKED</span></span><div class="sub" style="margin:2px 0 0;font-weight:400">You own Primed — thank you. Every feature, forever.</div></div></div>';
+    h+='<div class="frow"><div class="grow"><span class="fl">Primed Member <span class="pill-pro">ACTIVE</span></span><div class="sub" style="margin:2px 0 0;font-weight:400">Subscribed — thank you. Every feature included.</div></div></div>';
     h+='<div class="frow"><span class="fl">Restore on a new device</span><button class="btn small ghost ctl" onclick="restoreLifetime()">Restore</button></div>';
   } else {
     var st=accessState(), d=trialDaysLeft();
     var lbl = st==='trial' ? ('Free trial · '+d+' day'+(d!==1?'s':'')+' left') : 'Trial ended — read-only';
-    h+='<div class="frow"><div class="grow"><span class="fl">'+lbl+'</span><div class="sub" style="margin:2px 0 0;font-weight:400">'+(st==='trial'?'Unlock for life to keep logging after your trial.':'Unlock to log workouts again.')+'</div></div><button class="btn small ctl" onclick="trialEndedSheet()">Unlock · £10</button></div>';
+    h+='<div class="frow"><div class="grow"><span class="fl">'+lbl+'</span><div class="sub" style="margin:2px 0 0;font-weight:400">'+(st==='trial'?'Subscribe to keep logging after your trial.':'Subscribe to log workouts again.')+'</div></div><button class="btn small ctl" onclick="trialEndedSheet()">Subscribe · £15/yr</button></div>';
     if(!S.feedbackGiven)h+='<div class="frow"><div class="grow"><span class="fl">Get 2 more weeks</span><div class="sub" style="margin:2px 0 0;font-weight:400">Share your honest feedback to extend your trial</div></div><button class="btn small ghost ctl" onclick="feedbackSheet()">Feedback</button></div>';
     else h+='<div class="frow"><div class="grow"><span class="fl">Feedback submitted</span><div class="sub" style="margin:2px 0 0;font-weight:400">Under review — your 2 extra weeks land once it\'s approved</div></div></div>';
     h+='<div class="frow"><span class="fl">Already bought it?</span><button class="btn small ghost ctl" onclick="restoreLifetime()">Restore</button></div>';
@@ -2623,12 +2623,12 @@ var NATIVE=(function(){
     plugin:function(n){ return (isNative&&cap.registerPlugin)?cap.registerPlugin(n):null; }};
 })();
 
-/* ---- RevenueCat (one-time LIFETIME unlock) ----
+/* ---- RevenueCat (annual subscription) ----
    REVENUECAT_KEY_IOS = the PUBLIC SDK key from RevenueCat → Project → API keys
-   (starts with "appl_"; browser-safe, NOT a secret key). The £10 unlock is a
-   NON-CONSUMABLE product attached to the "lifetime" entitlement. */
+   (starts with "appl_"; browser-safe, NOT a secret key). Access is a £15/year
+   AUTO-RENEWABLE SUBSCRIPTION attached to the "pro" entitlement. */
 var REVENUECAT_KEY_IOS='appl_REPLACE_WITH_YOUR_PUBLIC_SDK_KEY';
-var LIFETIME_ENTITLEMENT='lifetime';   /* must match the entitlement id in RevenueCat */
+var LIFETIME_ENTITLEMENT='pro';   /* entitlement id in RevenueCat — backs the annual subscription */
 var Purchases=NATIVE.plugin('Purchases');
 function _hasLifetime(ci){ var a=ci&&ci.entitlements&&ci.entitlements.active; return !!(a&&a[LIFETIME_ENTITLEMENT]); }
 function nativeInitPurchases(){
@@ -2637,9 +2637,9 @@ function nativeInitPurchases(){
 }
 function nativeRefreshAccess(){
   if(!Purchases)return;
-  Purchases.getCustomerInfo().then(function(res){ if(_hasLifetime(res&&res.customerInfo)&&!S.purchased){ S.purchased=true; persist(); render(); } }).catch(function(){});
+  Purchases.getCustomerInfo().then(function(res){ var has=_hasLifetime(res&&res.customerInfo); if(has!==!!S.purchased){ S.purchased=has; persist(); render(); } }).catch(function(){});
 }
-function unlockLifetime(){ S.purchased=true; save(); closeSheet(); render(); toast('Unlocked — Primed is yours for life'); }
+function unlockLifetime(){ S.purchased=true; save(); closeSheet(); render(); toast('You\'re in — welcome to Primed'); }
 function buyLifetime(){
   if(Purchases){
     Purchases.getOfferings().then(function(res){
@@ -2654,7 +2654,7 @@ function buyLifetime(){
 }
 function restoreLifetime(){
   if(Purchases){ Purchases.restorePurchases().then(function(res){ if(_hasLifetime(res&&res.customerInfo))unlockLifetime(); else toast('Nothing to restore'); }).catch(function(){ toast('Could not restore'); }); return; }
-  toast(S.purchased?'Already unlocked':'No purchase found to restore');
+  toast(S.purchased?'Subscription already active':'No subscription found to restore');
 }
 /* lock screen shown when a read-only (trial-ended) user tries to log a workout */
 function trialEndedSheet(){
@@ -2662,10 +2662,10 @@ function trialEndedSheet(){
     ? '<div class="sub" style="text-align:center;margin:12px 4px 0;line-height:1.6">Feedback received — thank you. We\'ll add 2 more weeks once it\'s reviewed.</div>'
     : '<button class="btn soft" style="width:100%;margin-top:8px" onclick="closeSheet();feedbackSheet()">Get 2 more weeks — share feedback</button>';
   sheet('<h3>Your free trial has ended</h3><div class="sheetbody">'+
-    '<div class="sub" style="margin:-2px 0 14px">You can still browse everything you\'ve logged, but recording new workouts needs Primed unlocked. One payment, yours for life — no subscription, ever.</div>'+
-    '<div style="text-align:center;font-size:34px;font-weight:800;letter-spacing:-.02em">£10</div>'+
-    '<div class="sub" style="text-align:center;margin:2px 0 0">one-time · lifetime access</div></div>'+
-    '<button class="btn" style="margin-top:16px" onclick="buyLifetime()">Unlock Primed for life</button>'+
+    '<div class="sub" style="margin:-2px 0 14px">You can still browse everything you\'ve logged, but recording new workouts needs a Primed subscription.</div>'+
+    '<div style="text-align:center;font-size:34px;font-weight:800;letter-spacing:-.02em">£15<span style="font-size:16px;font-weight:600;color:var(--mut)">/year</span></div>'+
+    '<div class="sub" style="text-align:center;margin:2px 0 0">billed yearly · cancel anytime</div></div>'+
+    '<button class="btn" style="margin-top:16px" onclick="buyLifetime()">Subscribe — £15/year</button>'+
     fb+
     '<button class="btn ghost small" style="width:100%;margin-top:8px" onclick="restoreLifetime()">Restore purchase</button>');
 }
@@ -3093,7 +3093,7 @@ setInterval(function(){
 render();
 ensureTrialStarted();    /* start the 14-day trial clock for signed-in users who don't have one yet */
 syncOnLaunch();
-nativeInitPurchases();   /* RevenueCat lifetime entitlement → S.purchased (no-op on web) */
+nativeInitPurchases();   /* RevenueCat subscription entitlement → S.purchased (no-op on web) */
 checkStaleWorkout();     /* ask if a workout was left running */
 document.addEventListener('visibilitychange',function(){
   if(document.hidden){ _staleAsked=false; } else { checkStaleWorkout(); }
