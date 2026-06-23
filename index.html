@@ -2135,7 +2135,7 @@ function finishWorkout(){
     finalizeWorkout(wo);
     S.workouts.push(wo);
     S.workouts.sort(function(a,b){return a.start<b.start?-1:1;});
-    S.active=null; woOpen=false; stopRest(); cancelForgotReminder(); _staleAsked=false; save();
+    S.active=null; woOpen=false; stopRest(); cancelForgotReminder(); _staleAsked=false; save(); syncNow();
     tab='home'; stack=[]; render();
     toast(wo.prCount?('Workout saved — '+wo.prCount+' new PR'+(wo.prCount>1?'s':'')):'Workout saved');
   },'Finish');
@@ -2757,12 +2757,26 @@ function applyState(st){ if(!st)return; SYNC_KEYS.forEach(function(k){ if(st[k]!
 var _syncStatus='',_syncT=null;
 function syncLabel(){ return _syncStatus==='syncing'?'Syncing…':_syncStatus==='offline'?'Offline — saved on device':_syncStatus==='synced'?'Synced':(S._uid?'Synced':''); }
 function setSyncStatus(s){ _syncStatus=s; var el=$('#syncstatus'); if(el)el.textContent=syncLabel(); }
-function scheduleSync(){ if(!(SB&&S._uid))return; clearTimeout(_syncT); _syncT=setTimeout(pushSync,1500); }
-function pushSync(){
-  if(!(SB&&S._uid))return; setSyncStatus('syncing');
+function scheduleSync(){ if(!(SB&&S._uid))return; clearTimeout(_syncT); _syncT=setTimeout(pushSync,800); }
+function syncNow(){ if(!(SB&&S._uid))return; clearTimeout(_syncT); pushSync(); }            /* push immediately — used after finishing a workout */
+function flushSync(){ if(SB&&S._uid&&S._dirty){ clearTimeout(_syncT); pushSync(); } }       /* flush pending changes on background / reconnect */
+function _doPush(){
   SB.from('profiles').upsert({id:S._uid,email:(S.account&&S.account.email)||null,state:syncState(),state_updated_at:S.stateUpdatedAt,updated_at:new Date().toISOString()},{onConflict:'id'}).then(function(res){
     if(res.error){ setSyncStatus('offline'); } else { S._dirty=false; persist(); setSyncStatus('synced'); }
-  });
+  }).catch(function(){ setSyncStatus('offline'); });
+}
+function pushSync(){
+  if(!(SB&&S._uid))return; setSyncStatus('syncing');
+  /* anti-clobber: never let a device with no workouts overwrite a cloud that has them — pull and restore instead */
+  if(!(S.workouts&&S.workouts.length)){
+    SB.from('profiles').select('state,state_updated_at').eq('id',S._uid).maybeSingle().then(function(res){
+      var cs=res&&res.data&&res.data.state;
+      if(cs&&cs.workouts&&cs.workouts.length){ applyState(cs); S.stateUpdatedAt=res.data.state_updated_at||S.stateUpdatedAt; S._dirty=false; persist(); render(); setSyncStatus('synced'); }
+      else { _doPush(); }
+    }).catch(function(){ setSyncStatus('offline'); });
+    return;
+  }
+  _doPush();
 }
 function pullAndApply(){
   if(!(SB&&S._uid))return;
@@ -3301,8 +3315,10 @@ nativeInitPurchases();   /* RevenueCat subscription entitlement → S.purchased 
 })();
 checkStaleWorkout();     /* ask if a workout was left running */
 document.addEventListener('visibilitychange',function(){
-  if(document.hidden){ _staleAsked=false; } else { checkStaleWorkout(); }
+  if(document.hidden){ _staleAsked=false; flushSync(); } else { checkStaleWorkout(); }
 });
+window.addEventListener('pagehide',flushSync);      /* tab/app closing — push any unsynced changes */
+window.addEventListener('online',flushSync);         /* back online — retry pending sync */
 </script>
 </body>
 </html>
