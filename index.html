@@ -278,9 +278,11 @@ body{font-family:'Figtree',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,He
 .prow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
 .prow:last-child{border-bottom:none}
 .psheet{padding:0 18px;margin-bottom:16px}
-.psheet>.pcard{position:relative;border:none;border-radius:0;margin:0!important;padding:18px 0;background:transparent}
-.psheet>.pcard::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent 2%,var(--line) 18%,var(--line) 82%,transparent 98%)}
-.psheet>.pcard:last-child::after{display:none}
+.psheet>.pcard,.psheet>.card{position:relative;border:none;border-radius:0;margin:0!important;padding:18px 0;background:transparent}
+.psheet>.pcard::after,.psheet>.card::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent 2%,var(--line) 18%,var(--line) 82%,transparent 98%)}
+.psheet>.pcard:last-child::after,.psheet>.card:last-child::after{display:none}
+.psheet>.sec{margin:20px 0 10px}
+.psheet>.sec:first-child{margin-top:6px}
 .playbtn{width:46px;height:46px;border-radius:50%;background:var(--acc);color:var(--accText);border:none;display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer}
 .playbtn svg{width:20px;height:20px}
 .sheet h3{margin:0 0 12px;font-size:17px}
@@ -1741,23 +1743,27 @@ function workoutTabHtml(){
   h+='<div class="sec">Routines ('+S.routines.length+')</div>';
   h+='<button class="btn soft" onclick="newRoutine()" style="margin-bottom:12px">+ New Routine</button>';
   if(!S.routines.length) h+='<div class="empty"><div class="big">'+icon('clipboard')+'</div><b>No routines yet</b><br>Build a routine to start workouts faster.</div>';
+  else h+='<div class="psheet">';
   S.routines.forEach(function(r){
     var names=r.exercises.map(function(e){return exDef(e.exId).name;}).join(', ');
     h+='<div class="card"><div class="row"><div class="grow" style="cursor:pointer;min-width:0" onclick="viewRoutine(\''+r.id+'\')"><b>'+esc(r.name)+'</b><div class="sub" style="margin:3px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(names)+'</div></div>'+
        '<button class="iconbtn" onclick="routineMenu(\''+r.id+'\')" aria-label="Routine options" style="flex:none">'+icon('dots')+'</button></div>'+
        '<button class="btn small soft" style="margin-top:16px;width:100%" onclick="startRoutine(\''+r.id+'\')">Start Routine</button></div>';
   });
+  if(S.routines.length)h+='</div>';
   if(planFilter===null){var _sx=(S.sex||'').toLowerCase();planFilter=_sx.indexOf('female')>-1?'women':_sx.indexOf('male')>-1?'men':'all';}
   var _plans=PLANS.filter(function(p){var g=p.gender||'all';return planFilter==='all'||g==='all'||g===planFilter;});
   h+='<div class="sec">Workout Plans</div>';
   h+='<div class="seg" style="margin:0 0 12px">'+[['all','All'],['women','Women'],['men','Men']].map(function(t){return '<button class="'+(planFilter===t[0]?'on':'')+'" onclick="setPlanFilter(\''+t[0]+'\')">'+t[1]+'</button>';}).join('')+'</div>';
   h+='<div class="sub" style="margin:-4px 0 10px">Tap a plan to view its days, start one, or add it to your routines</div>';
+  if(_plans.length)h+='<div class="psheet">';
   _plans.forEach(function(p){
     var nex=0; p.days.forEach(function(d){nex+=d.items.length;});
     h+='<div class="card tap" onclick="pushScreen(\'planDetail\',\''+p.id+'\')"><div class="row">'+
        '<div class="grow"><b>'+esc(p.name)+'</b><div class="sub" style="margin:3px 0 0">'+p.days.length+'-day split · '+nex+' exercises</div></div>'+
        '<span class="tagchip">'+esc(p.tag)+'</span><span style="color:var(--mut)">›</span></div></div>';
   });
+  if(_plans.length)h+='</div>';
   if(!_plans.length)h+='<div class="empty"><div class="big">'+icon('clipboard')+'</div><b>No plans in this view</b><br>Switch tabs above to see more.</div>';
   return h+'</div>';
 }
@@ -1858,7 +1864,7 @@ function exercisesHtml(){
   var h='<div class="scr"><div class="row"><div class="grow"><div class="h1">Exercises</div></div><button class="btn small soft" onclick="newExercise()">+ Custom</button></div><div class="sub">'+exAll().length+' exercises</div>';
   h+='<input class="search" placeholder="Search exercises…" value="'+esc(exQ)+'" oninput="exQ=this.value;refreshExList()">';
   h+=exFilters();
-  h+='<div class="card" id="exlist" style="padding:4px 14px">'+exListRows(list)+'</div></div>';
+  h+='<div class="psheet" style="margin-top:14px"><div id="exlist" style="padding:0">'+exListRows(list)+'</div></div></div>';
   return h;
 }
 function exListRows(list){
@@ -1881,6 +1887,7 @@ function historyHtml(){
   var h='<div class="scr"><div class="h1">History</div><div class="sub">'+S.workouts.length+' workouts logged</div>';
   if(!S.workouts.length)return h+'<div class="empty"><div class="big">'+icon('cal')+'</div><b>Nothing here yet</b><br>Finish a workout and it will appear in your history.</div></div>';
   var tv=0,tt=0,tp=0; S.workouts.forEach(function(w){tv+=w.volume;tt+=w.dur;tp+=w.prCount;});
+  h+='<div class="psheet">';
   h+='<div class="pstats" style="margin-top:14px">'+
      '<div class="pst"><div class="pstatv" style="font-size:16.5px;white-space:nowrap">'+S.workouts.length+'</div><div class="pstatl">workouts</div></div>'+
      '<div class="psep"></div>'+
@@ -1897,6 +1904,7 @@ function historyHtml(){
     if(m!==lastMonth){h+='<div class="monthhead">'+m+'</div>';lastMonth=m;}
     h+=feedCard(w);
   });
+  h+='</div>';
   return h+'</div>';
 }
 function dashHistoryHtml(){
@@ -1954,6 +1962,7 @@ function profileHtml(){
   var h='<div class="scr"><div class="row" style="margin-bottom:14px">'+avatarHtml(56,22)+
     '<div class="grow"><div class="h1" style="margin:0">'+esc(S.name)+'</div><div class="sub" style="margin:0">'+(S.bio?esc(S.bio):S.workouts.length+' workouts')+'</div></div>'+
     '<button class="iconbtn" onclick="pushScreen(\'settings\')" aria-label="Settings">'+icon('sliders')+'</button></div>';
+  h+='<div class="psheet">';
   h+='<div class="pstats" style="margin:6px 0 4px">'+
      '<div class="pst"><div class="pstatv" style="font-size:18px;white-space:nowrap">'+S.workouts.length+'</div><div class="pstatl">workouts</div></div>'+
      '<div class="psep"></div>'+
@@ -2006,6 +2015,7 @@ function profileHtml(){
   /* Pro insights */
   if(isPremium()){ h+=stimulusCard(); h+=fuelingCard(); }
   else { h+='<div class="sec">Pro insights</div>'+stimulusCard()+fuelingCard(); }
+  h+='</div>';
   return h+'</div>';
 }
 
