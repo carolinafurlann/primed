@@ -58,7 +58,7 @@ body{font-family:'Figtree',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,He
 #screen::-webkit-scrollbar,.ovbody::-webkit-scrollbar,.sheetbody::-webkit-scrollbar{width:0;height:0}
 .scr{padding:22px 18px 10px}
 .h1{font-size:27px;font-weight:600;margin:2px 0 2px;letter-spacing:-.5px}
-.sub{color:var(--mut);font-size:13px;margin-bottom:16px;line-height:1.5}
+.sub{color:var(--mut);font-size:14px;margin-bottom:16px;line-height:1.5}
 .sec{font-size:13px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:28px 0 10px}
 .card{background:transparent;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
 .card.tap{cursor:pointer}
@@ -264,17 +264,17 @@ body{font-family:'Figtree',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,He
 @keyframes prpop{0%{transform:scale(.7) translateY(8px);opacity:0}10%{transform:scale(1.06);opacity:1}20%{transform:scale(1)}82%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-10px)}}
 .setrow.pr .stype{background:var(--acc);color:var(--accText);box-shadow:0 0 0 2px var(--accSoft)}
 .pcard{background:transparent;border:1px solid var(--line);border-radius:18px;padding:18px 18px}
-.plabel{font-size:10.5px;font-weight:600;letter-spacing:.15em;color:var(--mut);text-transform:uppercase}
+.plabel{font-size:11px;font-weight:600;letter-spacing:.14em;color:var(--mut);text-transform:uppercase}
 .pdiv{height:1px;background:var(--line);margin:17px 0}
 .phero{display:flex;align-items:center;gap:17px}
-.pchip{font-size:10.5px;color:var(--mut);border:1px solid var(--line);padding:2px 9px;border-radius:7px;white-space:nowrap}
+.pchip{font-size:12.5px;color:var(--mut);border:1px solid var(--line);padding:3px 10px;border-radius:8px;white-space:nowrap}
 .pstats{display:flex}
 .pstats>.pst{flex:1}
 .pstats>.pst{padding:0 11px;min-width:0}
 .pstats>.pst:first-child{padding-left:0}
 .pstats .psep{flex:none;width:1px;background:var(--line);margin:2px 0}
-.pstatv{font-size:23px;font-weight:600;letter-spacing:-.5px;font-variant-numeric:tabular-nums;color:var(--text);line-height:1}
-.pstatl{font-size:11px;color:var(--mut);margin-top:4px}
+.pstatv{font-size:20px;font-weight:600;letter-spacing:-.5px;font-variant-numeric:tabular-nums;color:var(--text);line-height:1.05;white-space:nowrap}
+.pstatl{font-size:12.5px;color:var(--mut);margin-top:5px}
 .prow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
 .prow:last-child{border-bottom:none}
 .psheet{padding:0 18px;margin-bottom:16px}
@@ -414,8 +414,8 @@ label.f{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:12p
 .cuenum{flex:none;width:22px;height:22px;border-radius:50%;background:var(--accSoft);color:var(--acc);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;margin-top:1px}
 /* weekly recap */
 .recapstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
-.recapstats b{display:block;font-size:18px;color:var(--acc)}
-.recapstats span{font-size:11px;color:var(--mut)}
+.recapstats b{display:block;font-size:15.5px;font-weight:600;color:var(--acc);white-space:nowrap;font-variant-numeric:tabular-nums}
+.recapstats span{font-size:12px;color:var(--mut)}
 /* ============ responsive: tablet & desktop ============ */
 .tablbl,.navbrand,.navonly{display:none}
 #tabbar.navhide{display:none}
@@ -429,7 +429,7 @@ label.f{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:12p
   body{background:var(--bg);display:block}
   #app{flex-direction:row;width:100%;max-width:none;height:100dvh;max-height:none;border-radius:0;border:none;box-shadow:none;padding-top:0;align-items:stretch}
   #screen{padding-bottom:32px}
-  #screen .scr{max-width:720px;margin:0 auto;padding:32px 32px 48px}
+  #screen .scr{max-width:600px;margin:0 auto;padding:30px 28px 48px}
   #screen .scr.dash{max-width:1340px;padding:30px 34px 54px}
   #tabbar,#tabbar.navhide{position:static;inset:auto;order:-1;width:250px;flex:none;height:auto;display:flex;flex-direction:column;align-items:stretch;gap:3px;padding:22px 16px;border:none;border-right:1px solid var(--line);border-radius:0;box-shadow:none;background:var(--card)}
   #tabbar .navbrand{display:flex;align-items:center;gap:11px;padding:4px 12px 22px;font-weight:800;font-size:20px;letter-spacing:-.3px;color:var(--text);order:0}
@@ -1425,14 +1425,14 @@ function readinessCard(){
     if(tr.source)chips.push('via '+wearableLabel(tr.source));
     var cf=r.conf||0, cfn=cf<0.5?1:cf<0.85?2:3, cfl=cf<0.5?'Building':cf<0.85?'Good':'Sharp', cseg='';
     for(var ci=0;ci<3;ci++)cseg+='<span style="width:18px;height:3px;border-radius:2px;background:'+(ci<cfn?'var(--acc)':'var(--card2)')+'"></span>';
-    var confHtml='<div style="display:flex;align-items:center;gap:8px;margin-top:12px"><span style="font-size:9px;letter-spacing:.12em;color:var(--mut)">CONFIDENCE</span><span style="display:flex;gap:3px">'+cseg+'</span><span style="font-size:11px;color:var(--mut);margin-left:auto">'+cfl+'</span></div>';
-    var buildHtml=r.baselineBuilding?'<div style="display:flex;gap:7px;align-items:flex-start;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)"><span style="color:var(--acc);display:flex;flex:none">'+icon('pulse')+'</span><span style="font-size:11.5px;color:var(--mut);line-height:1.45">Building your baseline &mdash; resting HR &amp; HRV start counting after a few more mornings.</span></div>':'';
+    var confHtml='<div style="display:flex;align-items:center;gap:8px;margin-top:12px"><span style="font-size:11px;letter-spacing:.1em;color:var(--mut)">CONFIDENCE</span><span style="display:flex;gap:3px">'+cseg+'</span><span style="font-size:11px;color:var(--mut);margin-left:auto">'+cfl+'</span></div>';
+    var buildHtml=r.baselineBuilding?'<div style="display:flex;gap:7px;align-items:flex-start;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)"><span style="color:var(--acc);display:flex;flex:none">'+icon('pulse')+'</span><span style="font-size:13px;color:var(--mut);line-height:1.45">Building your baseline &mdash; resting HR &amp; HRV start counting after a few more mornings.</span></div>':'';
     var headline=RD_HEADLINE[r.label]||r.label;
     return '<div class="pcard tap" style="position:relative;margin-bottom:16px" onclick="pushScreen(\'readiness\')"><button class="infobtn rdinfo" onclick="event.stopPropagation();readinessInfoSheet()" aria-label="About the readiness score">'+icon('info')+'</button>'+
       '<div class="plabel" style="margin-bottom:14px">Readiness</div>'+
       '<div class="phero">'+thinRing(r.score,r.color,86)+
         '<div class="grow"><div style="font-size:18px;font-weight:600;letter-spacing:-.2px;color:var(--text)">'+headline+'</div>'+
-        '<div style="font-size:12.5px;color:var(--mut);line-height:1.5;margin-top:5px">'+r.advice+'</div>'+
+        '<div style="font-size:14px;color:var(--mut);line-height:1.5;margin-top:6px">'+r.advice+'</div>'+
         (chips.length?'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">'+chips.slice(0,3).map(function(c){return '<span class="pchip">'+esc(c)+'</span>';}).join('')+'</div>':'')+
         confHtml+
       '</div></div>'+buildHtml+'</div>';
@@ -1632,7 +1632,6 @@ function dashHomeHtml(){
   return h;
 }
 function homeHtml(){
-  if(isDesktop())return dashHomeHtml();
   var mon=monday(new Date()).toISOString();
   var wk=S.workouts.filter(function(w){return w.start>=mon;});
   var vol=0,time=0; wk.forEach(function(w){vol+=w.volume;time+=w.dur;});
@@ -1693,14 +1692,14 @@ function homeHtml(){
     if(tr2){ var rr=computeReadiness(tr2); band=autoregBand(rr.score);
       if(band){
         rnote='<div class="row" style="gap:7px;margin:0 0 12px;align-items:flex-start"><span style="width:8px;height:8px;border-radius:50%;background:'+band.color+';flex:none;margin-top:5px"></span>'+
-          '<span style="font-size:12.5px;font-weight:600;color:var(--mut)"><b style="color:'+band.color+'">'+band.title+' · readiness '+rr.score+'</b> — '+band.msg+'</span></div>';
+          '<span style="font-size:13.5px;font-weight:600;color:var(--mut)"><b style="color:'+band.color+'">'+band.title+' · readiness '+rr.score+'</b> — '+band.msg+'</span></div>';
       } else {
         rnote='<div class="row" style="gap:7px;margin:0 0 12px;align-items:center"><span style="width:8px;height:8px;border-radius:50%;background:'+rr.color+';flex:none"></span>'+
-          '<span style="font-size:12.5px;font-weight:600;color:var(--mut)">Readiness '+rr.score+' · '+rr.label+' — '+rr.cue+'</span></div>';
+          '<span style="font-size:13.5px;font-weight:600;color:var(--mut)">Readiness '+rr.score+' · '+rr.label+' — '+rr.cue+'</span></div>';
       }
     }
-    var lighterLink=(band&&band.key==='deload')?'<div style="margin-top:2px"><span onclick="startRoutineLighter(\''+nr.id+'\')" style="font-size:12.5px;color:var(--acc);font-weight:700;cursor:pointer">Start lighter &rarr;</span></div>':'';
-    h+='<div class="pcard"><div class="plabel" style="margin-bottom:12px">Up next</div><div class="row" style="align-items:flex-start"><div class="grow" style="cursor:pointer;min-width:0" onclick="viewRoutine(\''+nr.id+'\')"><div style="font-size:18px;font-weight:600;letter-spacing:-.2px;color:var(--text)">'+esc(nr.name)+'</div><div style="font-size:12.5px;color:var(--mut);margin:4px 0 '+(rnote?'10px':'0')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(names)+'</div></div>'+
+    var lighterLink=(band&&band.key==='deload')?'<div style="margin-top:2px"><span onclick="startRoutineLighter(\''+nr.id+'\')" style="font-size:13.5px;color:var(--acc);font-weight:700;cursor:pointer">Start lighter &rarr;</span></div>':'';
+    h+='<div class="pcard"><div class="plabel" style="margin-bottom:12px">Up next</div><div class="row" style="align-items:flex-start"><div class="grow" style="cursor:pointer;min-width:0" onclick="viewRoutine(\''+nr.id+'\')"><div style="font-size:18px;font-weight:600;letter-spacing:-.2px;color:var(--text)">'+esc(nr.name)+'</div><div style="font-size:13.5px;color:var(--mut);margin:4px 0 '+(rnote?'10px':'0')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(names)+'</div></div>'+
        '<button class="playbtn" onclick="startRoutine(\''+nr.id+'\')" aria-label="Start routine">'+icon('play')+'</button></div>'+rnote+lighterLink+'</div>';
   }
   /* recent PRs */
@@ -1850,7 +1849,6 @@ function dashExercisesHtml(){
   return h;
 }
 function exercisesHtml(){
-  if(isDesktop())return dashExercisesHtml();
   var list=exAll().filter(function(e){
     if(exM!=='All'&&e.muscle!==exM)return false;
     if(exE!=='All'&&e.equip!==exE)return false;
@@ -1880,7 +1878,6 @@ function refreshExList(){
 }
 
 function historyHtml(){
-  if(isDesktop())return dashHistoryHtml();
   var h='<div class="scr"><div class="h1">History</div><div class="sub">'+S.workouts.length+' workouts logged</div>';
   if(!S.workouts.length)return h+'<div class="empty"><div class="big">'+icon('cal')+'</div><b>Nothing here yet</b><br>Finish a workout and it will appear in your history.</div></div>';
   var tv=0,tt=0,tp=0; S.workouts.forEach(function(w){tv+=w.volume;tt+=w.dur;tp+=w.prCount;});
