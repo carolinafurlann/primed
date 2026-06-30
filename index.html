@@ -150,11 +150,12 @@ body{font-family:'Figtree',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,He
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;background:var(--card2);color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
 .chip.on{background:var(--accSoft);color:var(--acc);border-color:var(--acc)}
-.search{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:16px;color:var(--text);outline:none;margin-bottom:10px;font-family:inherit}
+.search{width:100%;background:var(--card2);border:1px solid transparent;border-radius:12px;padding:12px 15px;font-size:15px;color:var(--text);outline:none;margin-bottom:12px;font-family:inherit}
+.search:focus{border-color:var(--line)}
 .search:focus{border-color:var(--acc)}
 .exrow{display:flex;align-items:center;gap:12px;padding:14px 4px;border-bottom:1px solid var(--line);cursor:pointer}
 .exrow:last-child{border-bottom:none}
-.avatar{width:42px;height:42px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:var(--acc);flex:none}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px;color:var(--acc);flex:none}
 .exname{font-weight:700;font-size:15px}
 .exmeta{font-size:12px;color:var(--mut);margin-top:1px}
 .checkbox{width:24px;height:24px;border-radius:8px;border:2px solid var(--line);flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
@@ -1746,9 +1747,9 @@ function workoutTabHtml(){
   else h+='<div class="psheet">';
   S.routines.forEach(function(r){
     var names=r.exercises.map(function(e){return exDef(e.exId).name;}).join(', ');
-    h+='<div class="card"><div class="row"><div class="grow" style="cursor:pointer;min-width:0" onclick="viewRoutine(\''+r.id+'\')"><b>'+esc(r.name)+'</b><div class="sub" style="margin:3px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(names)+'</div></div>'+
-       '<button class="iconbtn" onclick="routineMenu(\''+r.id+'\')" aria-label="Routine options" style="flex:none">'+icon('dots')+'</button></div>'+
-       '<button class="btn small soft" style="margin-top:16px;width:100%" onclick="startRoutine(\''+r.id+'\')">Start Routine</button></div>';
+    h+='<div class="card"><div class="row" style="align-items:flex-start;gap:10px"><div class="grow" style="cursor:pointer;min-width:0" onclick="viewRoutine(\''+r.id+'\')"><div style="font-size:18px;font-weight:600;letter-spacing:-.2px;color:var(--text)">'+esc(r.name)+'</div><div style="font-size:13.5px;color:var(--mut);margin:4px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(names)+'</div></div>'+
+       '<button class="iconbtn" onclick="routineMenu(\''+r.id+'\')" aria-label="Routine options" style="flex:none">'+icon('dots')+'</button>'+
+       '<button class="playbtn" onclick="startRoutine(\''+r.id+'\')" aria-label="Start routine">'+icon('play')+'</button></div></div>';
   });
   if(S.routines.length)h+='</div>';
   if(planFilter===null){var _sx=(S.sex||'').toLowerCase();planFilter=_sx.indexOf('female')>-1?'women':_sx.indexOf('male')>-1?'men':'all';}
@@ -1959,7 +1960,7 @@ function profileHtml(){
   var msMax=msArr.length?msArr[0][1]:1;
   var totalSets=0; msArr.forEach(function(x){totalSets+=x[1];});
 
-  var h='<div class="scr"><div class="row" style="margin-bottom:14px">'+avatarHtml(56,22)+
+  var h='<div class="scr"><div class="row" style="margin-bottom:14px">'+avatarHtml(48,19)+
     '<div class="grow"><div class="h1" style="margin:0">'+esc(S.name)+'</div><div class="sub" style="margin:0">'+(S.bio?esc(S.bio):S.workouts.length+' workouts')+'</div></div>'+
     '<button class="iconbtn" onclick="pushScreen(\'settings\')" aria-label="Settings">'+icon('sliders')+'</button></div>';
   h+='<div class="psheet">';
@@ -2715,7 +2716,7 @@ function settingsHtml(){
   h+='<div class="seg">'+[['profile','Profile'],['preferences','Preferences'],['data','Data']].map(function(t){
     return '<button class="'+(setSec===t[0]?'on':'')+'" onclick="setSec=\''+t[0]+'\';render()">'+t[1]+'</button>';
   }).join('')+'</div>';
-  h+= setSec==='preferences'?setPrefsTab() : setSec==='data'?setDataTab() : setProfileTab();
+  h+='<div class="psheet">'+(setSec==='preferences'?setPrefsTab() : setSec==='data'?setDataTab() : setProfileTab())+'</div>';
   return h+'</div>';
 }
 function setProfileTab(){
