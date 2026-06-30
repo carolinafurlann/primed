@@ -57,7 +57,7 @@ body{font-family:'Figtree',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,He
 #screen,.ovbody,.sheetbody{scrollbar-width:none}
 #screen::-webkit-scrollbar,.ovbody::-webkit-scrollbar,.sheetbody::-webkit-scrollbar{width:0;height:0}
 .scr{padding:22px 18px 10px}
-.h1{font-size:27px;font-weight:800;margin:2px 0 2px;letter-spacing:-.5px}
+.h1{font-size:27px;font-weight:600;margin:2px 0 2px;letter-spacing:-.5px}
 .sub{color:var(--mut);font-size:13px;margin-bottom:16px;line-height:1.5}
 .sec{font-size:13px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin:28px 0 10px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
@@ -270,7 +270,8 @@ body{font-family:'Figtree',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,He
 .pchip{font-size:10.5px;color:var(--mut);border:1px solid var(--line);padding:2px 9px;border-radius:7px;white-space:nowrap}
 .pstats{display:flex}
 .pstats>.pst{flex:1}
-.pstats>.pst+.pst{padding-left:15px}
+.pstats>.pst{padding:0 11px;min-width:0}
+.pstats>.pst:first-child{padding-left:0}
 .pstats .psep{flex:none;width:1px;background:var(--line);margin:2px 0}
 .pstatv{font-size:23px;font-weight:600;letter-spacing:-.5px;font-variant-numeric:tabular-nums;color:var(--text);line-height:1}
 .pstatl{font-size:11px;color:var(--mut);margin-top:4px}
@@ -314,7 +315,7 @@ label.f{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:12p
 .rec b{font-size:21px;font-weight:800;display:block;margin-top:2px;color:var(--acc);font-variant-numeric:tabular-nums}
 .rec span{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
 .hl{color:var(--acc)}
-.monthhead{font-size:13px;font-weight:800;color:var(--mut);margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em}
+.monthhead{font-size:11px;font-weight:600;color:var(--mut);margin:22px 0 12px;text-transform:uppercase;letter-spacing:.13em}
 .setline{display:flex;justify-content:space-between;font-size:14px;padding:4px 0;color:var(--mut)}
 .setline b{color:var(--text);font-weight:600}
 .pillrow{display:flex;gap:8px;flex-wrap:wrap}
@@ -1883,11 +1884,16 @@ function historyHtml(){
   var h='<div class="scr"><div class="h1">History</div><div class="sub">'+S.workouts.length+' workouts logged</div>';
   if(!S.workouts.length)return h+'<div class="empty"><div class="big">'+icon('cal')+'</div><b>Nothing here yet</b><br>Finish a workout and it will appear in your history.</div></div>';
   var tv=0,tt=0,tp=0; S.workouts.forEach(function(w){tv+=w.volume;tt+=w.dur;tp+=w.prCount;});
-  h+='<div class="card"><div class="row">'+
-     '<div class="stat"><b>'+S.workouts.length+'</b><span>Workouts</span></div>'+
-     '<div class="stat"><b>'+fmtVol(tv)+'</b><span>Volume</span></div>'+
-     '<div class="stat"><b>'+fmtDur(tt)+'</b><span>Time</span></div>'+
-     '<div class="stat"><b>'+tp+'</b><span>PRs</span></div></div></div>';
+  h+='<div class="pstats" style="margin-top:14px">'+
+     '<div class="pst"><div class="pstatv" style="font-size:16.5px;white-space:nowrap">'+S.workouts.length+'</div><div class="pstatl">workouts</div></div>'+
+     '<div class="psep"></div>'+
+     '<div class="pst"><div class="pstatv" style="font-size:16.5px;white-space:nowrap">'+fmtVol(tv)+'</div><div class="pstatl">volume</div></div>'+
+     '<div class="psep"></div>'+
+     '<div class="pst"><div class="pstatv" style="font-size:16.5px;white-space:nowrap">'+fmtDur(tt)+'</div><div class="pstatl">time</div></div>'+
+     '<div class="psep"></div>'+
+     '<div class="pst"><div class="pstatv" style="font-size:16.5px;white-space:nowrap">'+tp+'</div><div class="pstatl">PRs</div></div>'+
+     '</div>'+
+     '<div style="height:1px;background:linear-gradient(90deg,transparent 2%,var(--line) 18%,var(--line) 82%,transparent 98%);margin:18px 0 0"></div>';
   var list=S.workouts.slice().reverse(),lastMonth='';
   list.forEach(function(w){
     var m=monthName(w.start);
